@@ -3,6 +3,7 @@ import requests
 import xml.etree.ElementTree
 import re
 from urllib.parse import urljoin
+from datetime import datetime, timedelta
 
 DEFAULT_STATUS_PATH = 'DI_S_.xml'
 DEFAULT_LINE_PATH = 'PI_FXS_1_Stats.xml'
@@ -39,8 +40,15 @@ class PyObihai:
                                     services[name] = state
                 if 'Product Information' in name:
                     for e in o.findall("./parameter[@name='UpTime']/value"):
-                            state = e.attrib.get('current')
-                            services["UpTime"] = state
+                            days = e.attrib.get('current').split()[0]
+                            days = int(days)
+                            time = e.attrib.get('current').split()[2]
+                            h, m, s = time.split(':')
+                            h = int(h)
+                            m = int(m)
+                            s = int(s)
+                            state = datetime.utcnow() - timedelta(days=days, hours=h, minutes=m, seconds=s)
+                            services["Last Reboot"] = state.isoformat()
         except requests.exceptions.RequestException as e:
             _LOGGER.error(e)
         return services
