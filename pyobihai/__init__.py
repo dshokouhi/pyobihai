@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 
 DEFAULT_STATUS_PATH = 'DI_S_.xml'
 DEFAULT_LINE_PATH = 'PI_FXS_1_Stats.xml'
+DEFAULT_CALL_STATUS_PATH = 'callstatus.htm'
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -74,3 +75,63 @@ class PyObihai:
         except requests.exceptions.RequestException as e:
             _LOGGER.error(e)
         return services
+
+    def get_device_mac(self, url, username, password):
+
+        server_origin = '{}://{}'.format('http', url)
+        url = urljoin(server_origin, DEFAULT_STATUS_PATH)
+        mac = None
+        try: 
+            resp = requests.get(url, auth=requests.auth.HTTPDigestAuth(username,password), timeout=2)
+            root = xml.etree.ElementTree.fromstring(resp.text)
+            for o in root.findall("object"):
+                name = o.attrib.get('name')
+                if 'WAN Status' in name:
+                    for e in o.findall("./parameter[@name='MACAddress']/value"):
+                        mac = e.attrib.get('current')
+        except requests.exceptions.RequestException as e:
+            _LOGGER.error(e)
+        return mac
+
+    def get_device_serial(self, url, username, password):
+
+        server_origin = '{}://{}'.format('http', url)
+        url = urljoin(server_origin, DEFAULT_STATUS_PATH)
+        serial = None
+        try: 
+            resp = requests.get(url, auth=requests.auth.HTTPDigestAuth(username,password), timeout=2)
+            root = xml.etree.ElementTree.fromstring(resp.text)
+            for o in root.findall("object"):
+                name = o.attrib.get('name')
+                if 'Product Information' in name:
+                    for e in o.findall("./parameter[@name='SerialNumber']/value"):
+                        serial = e.attrib.get('current')
+        except requests.exceptions.RequestException as e:
+            _LOGGER.error(e)
+        return serial
+
+    def get_call_direction(self, url, username, password):
+        server_origin = '{}://{}'.format('http', url)
+        url = urljoin(server_origin, DEFAULT_CALL_STATUS_PATH)
+        call_direction = dict()
+        call_direction['Call Direction'] = 'No Active Calls'
+        try:
+            response = requests.get(url, auth=requests.auth.HTTPDigestAuth(username,password), timeout=2)
+            lines = response.text
+            start = lines.find("Number of Active Calls:")
+            if start != -1:
+                temp_str = lines[start + 24:]
+                end = temp_str.find("</tr>")
+                if end != -1:
+                    call_status = str(temp_str[:end])
+                    if call_status == "1":
+                        start = lines.find("Inbound")
+                        if start != -1:
+                            call_direction['Call Direction'] = "Inbound Call"
+                        else:
+                            start = lines.find("Outbound")
+                            if start != -1:
+                                call_direction['Call Direction'] = "Outbound Call"
+        except requests.exceptions.RequestException as e:
+            _LOGGER.error(e)
+        return call_direction
