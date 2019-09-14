@@ -14,6 +14,7 @@ _LOGGER = logging.getLogger(__name__)
 class PyObihai:
 
     def get_state(self, url, username, password):
+        """Get the state for services sensors, phone sensor and last reboot."""
 
         server_origin = '{}://{}'.format('http', url)
         url = urljoin(server_origin, DEFAULT_STATUS_PATH)
@@ -55,6 +56,7 @@ class PyObihai:
         return services
 
     def get_line_state(self, url, username, password):
+        """Get the state of the port connection and last caller info."""
 
         server_origin = '{}://{}'.format('http', url)
         url = urljoin(server_origin, DEFAULT_LINE_PATH)
@@ -77,6 +79,7 @@ class PyObihai:
         return services
 
     def get_device_mac(self, url, username, password):
+        """Get the device mac address."""
 
         server_origin = '{}://{}'.format('http', url)
         url = urljoin(server_origin, DEFAULT_STATUS_PATH)
@@ -94,6 +97,7 @@ class PyObihai:
         return mac
 
     def get_device_serial(self, url, username, password):
+        """Get the device serial number."""
 
         server_origin = '{}://{}'.format('http', url)
         url = urljoin(server_origin, DEFAULT_STATUS_PATH)
@@ -111,6 +115,8 @@ class PyObihai:
         return serial
 
     def get_call_direction(self, url, username, password):
+        """Get the call direction."""
+
         server_origin = '{}://{}'.format('http', url)
         url = urljoin(server_origin, DEFAULT_CALL_STATUS_PATH)
         call_direction = dict()
