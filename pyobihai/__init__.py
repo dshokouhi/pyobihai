@@ -16,6 +16,8 @@ class PyObihai:
     def get_state(self, url, username, password):
         """Get the state for services sensors, phone sensor and last reboot."""
 
+        if username == "user":
+            url = url + "/user/"
         server_origin = '{}://{}'.format('http', url)
         url = urljoin(server_origin, DEFAULT_STATUS_PATH)
 
@@ -58,6 +60,8 @@ class PyObihai:
     def get_line_state(self, url, username, password):
         """Get the state of the port connection and last caller info."""
 
+        if username == "user":
+            url = url + "/user/"
         server_origin = '{}://{}'.format('http', url)
         url = urljoin(server_origin, DEFAULT_LINE_PATH)
         services = dict()
@@ -81,6 +85,8 @@ class PyObihai:
     def get_device_mac(self, url, username, password):
         """Get the device mac address."""
 
+        if username == "user":
+            url = url + "/user/"
         server_origin = '{}://{}'.format('http', url)
         url = urljoin(server_origin, DEFAULT_STATUS_PATH)
         mac = None
@@ -99,6 +105,8 @@ class PyObihai:
     def get_device_serial(self, url, username, password):
         """Get the device serial number."""
 
+        if username == "user":
+            url = url + "/user/"
         server_origin = '{}://{}'.format('http', url)
         url = urljoin(server_origin, DEFAULT_STATUS_PATH)
         serial = None
@@ -117,6 +125,8 @@ class PyObihai:
     def get_call_direction(self, url, username, password):
         """Get the call direction."""
 
+        if username == "user":
+            url = url + "/user/"
         server_origin = '{}://{}'.format('http', url)
         url = urljoin(server_origin, DEFAULT_CALL_STATUS_PATH)
         call_direction = dict()
