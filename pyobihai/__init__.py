@@ -151,3 +151,20 @@ class PyObihai:
         except requests.exceptions.RequestException as e:
             _LOGGER.error(e)
         return call_direction
+
+    def check_account(self, url, username, password):
+        """Check account credentials."""
+
+        if username == "user":
+            url = url + "/user/"
+
+        server_origin = '{}://{}'.format('http', url)
+        url = urljoin(server_origin, DEFAULT_STATUS_PATH)
+
+        try:
+            response = requests.get(url, auth=requests.auth.HTTPDigestAuth(username,password), timeout=2)
+            if response.status_code == 200:
+                return True
+        except requests.exceptions.RequestException:
+            _LOGGER.error("Invalid credentials")
+        return False
