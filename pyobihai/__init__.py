@@ -13,17 +13,22 @@ _LOGGER = logging.getLogger(__name__)
 
 class PyObihai:
 
-    def get_state(self, url, username, password):
+    def __init__(self, host, username, password):
+        """Initialize connection."""
+        self._username = username
+        self._password = password
+        if self._username == "user":
+            host = host + "/user/"
+        self._server = '{}://{}'.format('http', host)
+
+    def get_state(self):
         """Get the state for services sensors, phone sensor and last reboot."""
 
-        if username == "user":
-            url = url + "/user/"
-        server_origin = '{}://{}'.format('http', url)
-        url = urljoin(server_origin, DEFAULT_STATUS_PATH)
+        url = urljoin(self._server, DEFAULT_STATUS_PATH)
 
         services = dict()
         try:
-            resp = requests.get(url, auth=requests.auth.HTTPDigestAuth(username,password), timeout=2)
+            resp = requests.get(url, auth=requests.auth.HTTPDigestAuth(self._username,self._password), timeout=2)
             root = xml.etree.ElementTree.fromstring(resp.text)
             for models in root.iter('model'):
                 if models.attrib["reboot_req"]:
@@ -57,16 +62,13 @@ class PyObihai:
             _LOGGER.error(e)
         return services
 
-    def get_line_state(self, url, username, password):
+    def get_line_state(self):
         """Get the state of the port connection and last caller info."""
 
-        if username == "user":
-            url = url + "/user/"
-        server_origin = '{}://{}'.format('http', url)
-        url = urljoin(server_origin, DEFAULT_LINE_PATH)
+        url = urljoin(self._server, DEFAULT_LINE_PATH)
         services = dict()
         try: 
-            resp = requests.get(url, auth=requests.auth.HTTPDigestAuth(username,password), timeout=2)
+            resp = requests.get(url, auth=requests.auth.HTTPDigestAuth(self._username,self._password), timeout=2)
             root = xml.etree.ElementTree.fromstring(resp.text)
             for o in root.findall("object"):
                 name = o.attrib.get('name')
@@ -82,16 +84,13 @@ class PyObihai:
             _LOGGER.error(e)
         return services
 
-    def get_device_mac(self, url, username, password):
+    def get_device_mac(self):
         """Get the device mac address."""
 
-        if username == "user":
-            url = url + "/user/"
-        server_origin = '{}://{}'.format('http', url)
-        url = urljoin(server_origin, DEFAULT_STATUS_PATH)
+        url = urljoin(self._server, DEFAULT_STATUS_PATH)
         mac = None
         try: 
-            resp = requests.get(url, auth=requests.auth.HTTPDigestAuth(username,password), timeout=2)
+            resp = requests.get(url, auth=requests.auth.HTTPDigestAuth(self._username,self._password), timeout=2)
             root = xml.etree.ElementTree.fromstring(resp.text)
             for o in root.findall("object"):
                 name = o.attrib.get('name')
@@ -102,16 +101,13 @@ class PyObihai:
             _LOGGER.error(e)
         return mac
 
-    def get_device_serial(self, url, username, password):
+    def get_device_serial(self):
         """Get the device serial number."""
 
-        if username == "user":
-            url = url + "/user/"
-        server_origin = '{}://{}'.format('http', url)
-        url = urljoin(server_origin, DEFAULT_STATUS_PATH)
+        url = urljoin(self._server, DEFAULT_STATUS_PATH)
         serial = None
         try: 
-            resp = requests.get(url, auth=requests.auth.HTTPDigestAuth(username,password), timeout=2)
+            resp = requests.get(url, auth=requests.auth.HTTPDigestAuth(self._username,self._password), timeout=2)
             root = xml.etree.ElementTree.fromstring(resp.text)
             for o in root.findall("object"):
                 name = o.attrib.get('name')
@@ -122,17 +118,14 @@ class PyObihai:
             _LOGGER.error(e)
         return serial
 
-    def get_call_direction(self, url, username, password):
+    def get_call_direction(self):
         """Get the call direction."""
 
-        if username == "user":
-            url = url + "/user/"
-        server_origin = '{}://{}'.format('http', url)
-        url = urljoin(server_origin, DEFAULT_CALL_STATUS_PATH)
+        url = urljoin(self._server, DEFAULT_CALL_STATUS_PATH)
         call_direction = dict()
         call_direction['Call Direction'] = 'No Active Calls'
         try:
-            response = requests.get(url, auth=requests.auth.HTTPDigestAuth(username,password), timeout=2)
+            response = requests.get(url, auth=requests.auth.HTTPDigestAuth(self._username,self._password), timeout=2)
             lines = response.text
             start = lines.find("Number of Active Calls:")
             if start != -1:
@@ -152,17 +145,13 @@ class PyObihai:
             _LOGGER.error(e)
         return call_direction
 
-    def check_account(self, url, username, password):
+    def check_account(self):
         """Check account credentials."""
 
-        if username == "user":
-            url = url + "/user/"
-
-        server_origin = '{}://{}'.format('http', url)
-        url = urljoin(server_origin, DEFAULT_STATUS_PATH)
+        url = urljoin(self._server, DEFAULT_STATUS_PATH)
 
         try:
-            response = requests.get(url, auth=requests.auth.HTTPDigestAuth(username,password), timeout=2)
+            response = requests.get(url, auth=requests.auth.HTTPDigestAuth(self._username,self._password), timeout=2)
             if response.status_code == 200:
                 return True
         except requests.exceptions.RequestException:
