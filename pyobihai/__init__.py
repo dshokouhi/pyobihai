@@ -69,6 +69,8 @@ class PyObihai:
         services = dict()
         try: 
             resp = requests.get(url, auth=requests.auth.HTTPDigestAuth(self._username,self._password), timeout=2)
+            if (resp.status_code != 200):
+                return
             root = xml.etree.ElementTree.fromstring(resp.text)
             for o in root.findall("object"):
                 name = o.attrib.get('name')
