@@ -57,7 +57,7 @@ class PyObihai:
                             m = int(m)
                             s = int(s)
                             state = datetime.utcnow() - timedelta(days=days, hours=h, minutes=m, seconds=s)
-                            state = state - datetime.timedelta(microseconds=state.microseconds)
+                            state = state - timedelta(microseconds=state.microsecond)
                             services["Last Reboot"] = state.isoformat()
         except requests.exceptions.RequestException as e:
             _LOGGER.error(e)
