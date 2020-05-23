@@ -58,7 +58,7 @@ class PyObihai:
                             m = int(m)
                             s = int(s)
                             now = datetime.utcnow()
-                            state = now - timedelta(days=days, hours=h, minutes=m, seconds=s, now.microsecond)
+                            state = now - timedelta(days=days, hours=h, minutes=m, seconds=s, microseconds=now.microsecond)
                             if abs(self._last_reboot - state) > timedelta(seconds=1):
                                 self._last_reboot = state
                             services["Last Reboot"] = self._last_reboot.isoformat()
