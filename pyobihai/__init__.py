@@ -20,6 +20,7 @@ class PyObihai:
         if self._username == "user":
             host = host + "/user/"
         self._server = '{}://{}'.format('http', host)
+        self._last_reboot = datetime.utcnow()
 
     def get_state(self):
         """Get the state for services sensors, phone sensor and last reboot."""
@@ -56,8 +57,11 @@ class PyObihai:
                             h = int(h)
                             m = int(m)
                             s = int(s)
-                            state = datetime.utcnow() - timedelta(days=days, hours=h, minutes=m, seconds=s)
-                            services["Last Reboot"] = state.isoformat()
+                            now = datetime.utcnow()
+                            state = now - timedelta(days=days, hours=h, minutes=m, seconds=s, microseconds=now.microsecond)
+                            if abs(self._last_reboot - state) > timedelta(seconds=5):
+                                self._last_reboot = state
+                            services["Last Reboot"] = self._last_reboot.isoformat()
         except requests.exceptions.RequestException as e:
             _LOGGER.error(e)
         return services
