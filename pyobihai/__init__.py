@@ -3,7 +3,7 @@ import requests
 import xml.etree.ElementTree
 import re
 from urllib.parse import urljoin
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 DEFAULT_STATUS_PATH = 'DI_S_.xml'
 DEFAULT_LINE_PATH = 'PI_FXS_1_Stats.xml'
@@ -20,7 +20,7 @@ class PyObihai:
         if self._username == "user":
             host = host + "/user/"
         self._server = '{}://{}'.format('http', host)
-        self._last_reboot = datetime.utcnow()
+        self._last_reboot = datetime.now(timezone.utc)
 
     def get_state(self):
         """Get the state for services sensors, phone sensor and last reboot."""
@@ -57,7 +57,7 @@ class PyObihai:
                             h = int(h)
                             m = int(m)
                             s = int(s)
-                            now = datetime.utcnow()
+                            now = datetime.now(timezone.utc)
                             state = now - timedelta(days=days, hours=h, minutes=m, seconds=s, microseconds=now.microsecond)
                             if abs(self._last_reboot - state) > timedelta(seconds=5):
                                 self._last_reboot = state
