@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pyobihai",
-    version="1.2.2",
+    version="1.2.3",
     author="Daniel Shokouhi",
     author_email="dshokouhi@gmail.com",
     description="A Python wrapper for Obihai",
