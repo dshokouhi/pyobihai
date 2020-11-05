@@ -85,7 +85,7 @@ class PyObihai:
                         services[subtitle] = state
                     for x in o.findall("./parameter[@name='LastCallerInfo']/value"):
                         state = x.attrib.get('current')
-                        services[subtitle + " Last Caller Info"] = state
+                        services[subtitle + " Last Caller Info"] = state.strip("\' ")
         except requests.exceptions.RequestException as e:
             _LOGGER.error(e)
         return services
