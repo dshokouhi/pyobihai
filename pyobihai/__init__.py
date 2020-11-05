@@ -8,6 +8,7 @@ from datetime import datetime, timedelta, timezone
 DEFAULT_STATUS_PATH = 'DI_S_.xml'
 DEFAULT_LINE_PATH = 'PI_FXS_1_Stats.xml'
 DEFAULT_CALL_STATUS_PATH = 'callstatus.htm'
+DEFAULT_REBOOT_PATH = 'rebootgetconfig.htm'
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -155,6 +156,19 @@ class PyObihai:
         """Check account credentials."""
 
         url = urljoin(self._server, DEFAULT_STATUS_PATH)
+
+        try:
+            response = requests.get(url, auth=requests.auth.HTTPDigestAuth(self._username,self._password), timeout=2)
+            if response.status_code == 200:
+                return True
+        except requests.exceptions.RequestException:
+            _LOGGER.error("Invalid credentials")
+        return False
+
+    def call_reboot(self):
+        """Send request to reboot"""
+        
+        url = urljoin(self._server, DEFAULT_REBOOT_PATH)
 
         try:
             response = requests.get(url, auth=requests.auth.HTTPDigestAuth(self._username,self._password), timeout=2)
