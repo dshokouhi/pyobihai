@@ -174,6 +174,6 @@ class PyObihai:
             response = requests.get(url, auth=requests.auth.HTTPDigestAuth(self._username,self._password), timeout=2)
             if response.status_code == 200:
                 return True
-        except requests.exceptions.RequestException:
-            _LOGGER.error("Invalid credentials")
+        except requests.exceptions.RequestException as e:
+            _LOGGER.error(e)
         return False
