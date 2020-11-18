@@ -167,7 +167,7 @@ class PyObihai:
 
     def call_reboot(self):
         """Send request to reboot"""
-        
+
         url = urljoin(self._server, DEFAULT_REBOOT_PATH)
 
         try:
