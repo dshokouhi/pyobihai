@@ -33,8 +33,9 @@ class PyObihai:
             resp = requests.get(url, auth=requests.auth.HTTPDigestAuth(self._username,self._password), timeout=2)
             root = xml.etree.ElementTree.fromstring(resp.text)
             for models in root.iter('model'):
-                if models.attrib["reboot_req"]:
-                    services["Reboot Required"] = models.attrib["reboot_req"]
+                if 'reboot_req' in models.attrib:
+                    if models.attrib["reboot_req"]:
+                        services["Reboot Required"] = models.attrib["reboot_req"]
             for o in root.findall("object"):
                 name = o.attrib.get('name')
                 if 'Service Status' in name:
