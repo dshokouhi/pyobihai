@@ -9,6 +9,7 @@ setuptools.setup(
     author="Daniel Shokouhi",
     author_email="dshokouhi@gmail.com",
     description="A Python wrapper for Obihai",
+    license="MIT",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/dshokouhi/pyobihai",
